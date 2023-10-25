@@ -1,0 +1,25 @@
+// 
+//   echo.jas
+//
+//   Author
+//     Dan Stone (modifié par Guillaume Pierre)
+//
+//   Description
+//     Ce programme lit des caractères tapés dans la "input console"
+//     et les affiche dans la "output console"
+//
+
+
+.main
+
+L1:   IN           // Cette instruction lit un caractère et le met sur la pile
+      DUP          // Duplique l'élément au sommet de la pile (pour la comparaison)
+      BIPUSH 0x0   // Empile 0x0 pour comparer avec le caractère lu
+      IF_ICMPEQ L2 // Dépile deux valeurs; si elles sont égales, brancher vers L2
+      OUT          // Sinon afficher le caractère en haut de la pile
+      GOTO L1      // Revenir au début
+
+
+L2:   POP          // Le caractère lu est vide, on l'enlève de la pile
+      GOTO L1      // Et on revient au début
+.end-main

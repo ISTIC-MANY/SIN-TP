@@ -1,0 +1,8 @@
+.main			// Début du programme
+
+// Multiplication de 4*4
+start:	BIPUSH 0x4
+	BIPUSH 0x4
+	IMUL
+.end-main
+// Résultat: 10 (en Hexadécimal)
