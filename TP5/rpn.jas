@@ -1,0 +1,49 @@
+// 
+//   rpn.jas
+//
+//   Author
+//	Ruth AYIVI ruth.ayivi@etudiant.univ-rennes1.fr
+//	Ezan TAHI ezan.tahi@etudiant.univ-rennes1.fr
+//
+//   Description
+//	Ce programme lit des caractères tapés dans la "input console" en notation
+//	polonaise inversée et affiche le résultat du calcul dans la "output console"
+//
+
+.main
+
+BEGIN:		IN				// Cette instruction lit un caractère et le met sur la pile
+		DUP				// Duplique l'élément au sommet de la pile (pour la comparaison)
+		BIPUSH 0x43			// Empile 0x43 (Code ASCII de l'opérateur +) pour le comparer avec le caractère lu
+		IF_ICMPEQ ADD			// Si le caractère lu est '+' on branche vers ADD
+		DUP				// Sinon, on duplique à nouveau le caractère lu (pour la comparaison)
+		BIPUSH 0x45			// Empile 0x45 (Code ASCII de l'opérateur -) pour le comparer avec le caractère lu
+		IF_ICMPEQ SUB			// Si le caractère lu est '-' on branche vers ADD
+		DUP				// Sinon, on duplique à nouveau le caractère lu (pour la comparaison)
+		BIPUSH 0x42			// Empile 0x10 (Code ASCII de l'opérateur FIN DE LIGNE) pour le comparer avec le caractère lu
+		IF_ICMPEQ OUTPUT_RESULT		// Si le caractère lu différent de '+', '-', 0..9 et fin de ligne, alors on le retire
+		DUP				// Sinon, on duplique à nouveau le caractère lu (pour la comparaison)
+		BIPUSH 0x48			// Empile 0x45 (Code ASCII de l'opérateur -) pour le comparer avec le caractère lu
+		IFLT REMOVE_IN			// Si le caractère lu est '-' on branche vers ADD
+		//DUP				// Sinon, on duplique à nouveau le caractère lu (pour la comparaison)
+		//ISTORE i
+		//BIPUSH 0x57			// Empile 0x45 (Code ASCII de l'opérateur -) pour le comparer avec le caractère lu
+		//BIPUSH i
+		//IFLT REMOVE_IN		// Si le caractère lu est '-' on branche vers ADD
+		GOTO BEGIN
+		
+		
+
+ADD:		IADD
+		GOTO BEGIN
+
+SUB:		ISUB
+		GOTO BEGIN
+		
+OUTPUT_RESULT:	OUT          			// Afficher le caractère en haut de la pile
+		GOTO BEGIN      		// Revenir au début
+
+REMOVE_IN:   	POP          			// Le caractère lu différent de '+', '-', 0..9 et fin de ligne, on l'enlève de la pile
+      		GOTO BEGIN      		// Et on revient au début
+
+.end-main

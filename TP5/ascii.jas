@@ -1,0 +1,24 @@
+
+// This program displays all the printable ASCII values 32..126
+
+.constant
+one     1
+start   32
+stop    126
+.end-constant
+
+.main
+        LDC_W start     // Empiler la constante start
+next:   DUP             // Dupliquer le sommet de la pile
+        OUT             // Affiche le nouveau sommet de pile
+        DUP             // Dupliquer le sommet de la pile
+        LDC_W stop      // Empiler la constante stop
+        ISUB            // Dépiler deux valeurs, les soustraire, empiler le résultat
+        IFEQ done       // Si les deux valeurs étaient égales, alors brancher vers done
+        LDC_W one       // Empiler la constante one
+        IADD            // Dépiler deux valeurs, les additioner, empiler le résultat
+        GOTO next       // Brancher vers l'etiquette next
+done:   POP             // Dépiler une valeur
+        HALT            // Arrêter le programme
+.end-main
+
