@@ -2,8 +2,8 @@
 //   rpn.jas
 //
 //   Author
-//	Ruth AYIVI ruth.ayivi@etudiant.univ-rennes1.fr
-//	Ezan TAHI ezan.tahi@etudiant.univ-rennes1.fr
+//	Ruth AYIVI <ruth.ayivi@etudiant.univ-rennes1.fr>
+//	Ezan TAHI <ezan.tahi@etudiant.univ-rennes1.fr>
 //
 //   Description
 //	Ce programme lit des caractères tapés dans la "input console" en notation
@@ -13,37 +13,50 @@
 .main
 
 BEGIN:		IN				// Cette instruction lit un caractère et le met sur la pile
+		DUP          			// Duplique l'élément au sommet de la pile (pour la comparaison)
+      		BIPUSH 0x0   			// Empile 0x0 pour comparer avec le caractère lu
+      		IF_ICMPEQ REMOVE_IN 		// Si Le caractère lu est vide, on l'enlève de la pile
+      		
+      		DUP				// Duplique l'élément au sommet de la pile (pour la comparaison)
+		BIPUSH 43			// Empile 0x43 (Code ASCII de l'opérateur +) pour le comparer avec le caractère lu
+		IF_ICMPEQ ADD			// Si le caractère lu est '+' on branche vers ADD (pour l'addition)
+		
 		DUP				// Duplique l'élément au sommet de la pile (pour la comparaison)
-		BIPUSH 0x43			// Empile 0x43 (Code ASCII de l'opérateur +) pour le comparer avec le caractère lu
-		IF_ICMPEQ ADD			// Si le caractère lu est '+' on branche vers ADD
-		DUP				// Sinon, on duplique à nouveau le caractère lu (pour la comparaison)
-		BIPUSH 0x45			// Empile 0x45 (Code ASCII de l'opérateur -) pour le comparer avec le caractère lu
-		IF_ICMPEQ SUB			// Si le caractère lu est '-' on branche vers ADD
-		DUP				// Sinon, on duplique à nouveau le caractère lu (pour la comparaison)
-		BIPUSH 0x42			// Empile 0x10 (Code ASCII de l'opérateur FIN DE LIGNE) pour le comparer avec le caractère lu
-		IF_ICMPEQ OUTPUT_RESULT		// Si le caractère lu différent de '+', '-', 0..9 et fin de ligne, alors on le retire
-		DUP				// Sinon, on duplique à nouveau le caractère lu (pour la comparaison)
-		BIPUSH 0x48			// Empile 0x45 (Code ASCII de l'opérateur -) pour le comparer avec le caractère lu
-		IFLT REMOVE_IN			// Si le caractère lu est '-' on branche vers ADD
-		//DUP				// Sinon, on duplique à nouveau le caractère lu (pour la comparaison)
-		//ISTORE i
-		//BIPUSH 0x57			// Empile 0x45 (Code ASCII de l'opérateur -) pour le comparer avec le caractère lu
-		//BIPUSH i
-		//IFLT REMOVE_IN		// Si le caractère lu est '-' on branche vers ADD
-		GOTO BEGIN
+		BIPUSH 45			// Empile 0x43 (Code ASCII de l'opérateur +) pour le comparer avec le caractère lu
+		IF_ICMPEQ SUB			// Si le caractère lu est '+' on branche vers ADD (pour l'addition)
+		
+		DUP				// Sinon, on duplique à nouveau le caractère lu
+		BIPUSH 10			// Empile 0x10 (Code ASCII de l'opérateur FIN DE LIGNE) pour le comparer avec le caractère lu
+		IF_ICMPEQ SHOW			// Si le caractère lu est FIN DE LIGNE, on branche vers OUTPUT_RESULT (pour afficher le résultat)
+		
+		//DUP				// Sinon, on duplique à nouveau le caractère lu
+		//BIPUSH 0x30			// Empile 0x10 (Code ASCII de l'opérateur FIN DE LIGNE) pour le comparer avec le caractère lu
+		//IFLT REMOVE_IN			// Si le caractère lu est FIN DE LIGNE, on branche vers OUTPUT_RESULT (pour afficher le résultat)
+		
+		GOTO CONVERT_IN
 		
 		
+// Etiquettes utiles
 
-ADD:		IADD
+SHOW:		POP
+		BIPUSH 0x30          		// Converti le code ASCII de la valeur au sommet de la pile en entier et empile le résultat
+		IADD
+      		OUT
+      		GOTO BEGIN		
+
+ADD:		POP
+		IADD			// Dépile deux valeurs du sommet et empile leur somme
 		GOTO BEGIN
 
-SUB:		ISUB
+SUB:		POP
+		ISUB			// Dépile deux valeurs du sommet et empile leur différence
 		GOTO BEGIN
-		
-OUTPUT_RESULT:	OUT          			// Afficher le caractère en haut de la pile
-		GOTO BEGIN      		// Revenir au début
 
-REMOVE_IN:   	POP          			// Le caractère lu différent de '+', '-', 0..9 et fin de ligne, on l'enlève de la pile
-      		GOTO BEGIN      		// Et on revient au début
+CONVERT_IN:   	BIPUSH 0x30          	// Converti le code ASCII de la valeur au sommet de la pile en entier et empile le résultat
+		ISUB
+      		GOTO BEGIN
+
+REMOVE_IN:   	POP          		// Retire la valeur au sommet de la pile
+      		GOTO BEGIN
 
 .end-main
