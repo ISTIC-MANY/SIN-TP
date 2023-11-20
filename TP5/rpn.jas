@@ -10,37 +10,60 @@
 //	polonaise inversée et affiche le résultat du calcul dans la "output console"
 //
 
+
+// Définition des constantes
+
+.constant
+
+empty	0	// Code ASCII du caractère vide
+enter	10	// Code ASCII du caractère de fin de ligne
+plus	43	// Code ASCII du caractère '+'
+minus	45	// Code ASCII du caractère '-'
+zero	48	// Code ASCII du caractère '0'
+nine	57	// Code ASCII du caractère '9'
+
+.end-constant
+
+
+// Programme prinipal
+
 .main
 
 BEGIN:		IN				// Cette instruction lit un caractère et le met sur la pile
 		DUP          			// Duplique l'élément au sommet de la pile (pour la comparaison)
-      		BIPUSH 0x0   			// Empile 0x0 pour comparer avec le caractère lu
+      		LDC_W empty   			// Empile la constante empty pour la comparer avec le caractère lu
       		IF_ICMPEQ REMOVE_IN 		// Si le caractère lu est vide, on l'enlève de la pile
       		
       		DUP				// Sinon, on duplique à nouveau le caractère lu
-		BIPUSH 43			// Empile 43 (Code ASCII de l'opérateur '+') pour le comparer avec le caractère lu
-		IF_ICMPEQ ADD			// Si le caractère lu est '+' on branche vers ADD (pour l'addition)
+		LDC_W plus			// Empile la constante plus pour la comparer avec le caractère lu
+		IF_ICMPEQ ADD			// Si le caractère lu est '+', on branche vers ADD (pour l'addition)
 		
 		DUP				// Sinon, on duplique à nouveau le caractère lu
-		BIPUSH 45			// Empile 45 (Code ASCII de l'opérateur '-') pour le comparer avec le caractère lu
-		IF_ICMPEQ SUB			// Si le caractère lu est '-' on branche vers SUB (pour la soustraction)
+		LDC_W minus			// Empile 45 (Code ASCII de l'opérateur '-') pour le comparer avec le caractère lu
+		IF_ICMPEQ SUB			// Si le caractère lu est '-', on branche vers SUB (pour la soustraction)
 		
 		DUP				// Sinon, on duplique à nouveau le caractère lu
-		BIPUSH 10			// Empile 10 (Code ASCII de l'opérateur FIN DE LIGNE) pour le comparer avec le caractère lu
+		LDC_W enter			// Empile la constante enter pour la comparer avec le caractère lu
 		IF_ICMPEQ SHOW			// Si le caractère lu est FIN DE LIGNE, on branche vers OUTPUT_RESULT (pour afficher le résultat)
 		
-		DUP
-		BIPUSH 0x30
-		IFLT REMOVE_IN
+		// Est logique mais ne fonctionne pas
+		//DUP				// Sinon, on duplique à nouveau le caractère lu
+		//LDC_W zero			// Empile la constante zero pour la comparer avec le caractère lu
+		//IFLT REMOVE_IN		// Si le code ASCII du caractère lu est inférieur à celui de '0', on le retire (car c'est un caractère indésirable)
 		
-		GOTO CONVERT_IN			// A ce stade, le caractère lu est forcément dans l'intervalle 0..9, donc on branche vers CONVERT_IN
+		//DUP				// Sinon, on duplique à nouveau le caractère lu
+		//LDC_W nine			// Empile la constante nine pour la comparer avec le caractère lu
+		//SWAP				// Permute les deux valeurs au sommet de la pile
+		//IFLT REMOVE_IN		// Si le code ASCII du caractère lu est supérieur à celui de '9', on le retire (car c'est un caractère indésirable)
+		
+		GOTO CONVERT_IN			// A ce stade, le caractère lu est forcément dans l'intervalle 0..9, on branche vers CONVERT_IN (pour le convertir en nombre décimal)
 
-		
+	
 // Etiquettes utiles
 
 // SHOW: Converti la valeur au sommet de la pile en code ASCII pour l'afficher à l'écran
 SHOW:		POP
-		BIPUSH 0x30
+		LDC_W zero
 		IADD
       		OUT
       		GOTO BEGIN
@@ -56,7 +79,7 @@ SUB:		POP
 		GOTO BEGIN
 
 // CONVERT_IN: Converti le code ASCII de la valeur au sommet de la pile en entier et empile le résultat
-CONVERT_IN:   	BIPUSH 0x30
+CONVERT_IN:   	LDC_W zero
 		ISUB
       		GOTO BEGIN
 
