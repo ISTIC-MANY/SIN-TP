@@ -77,6 +77,7 @@ NEW_LINE:	LDC_W enter
 // ADD: Dépile deux valeurs du sommet et empile leur somme
 ADD:		POP
 		IADD
+		// Pour éviter les débordements, si le résultat d'une addition est supérieur à 9, alors le limite à 9
 		DUP
 		BIPUSH 9
 		SWAP
@@ -87,6 +88,7 @@ ADD:		POP
 // SUB: Dépile deux valeurs du sommet et empile leur différence
 SUB:		POP
 		ISUB
+		// Pour éviter les nombres négatifs, si le résultat d'une soustraction est inférieur à 0, alors le limite à 0
 		DUP
 		IFLT SHOW_NEGATIVE
 		GOTO BEGIN
