@@ -46,15 +46,16 @@ BEGIN:		IN				// Cette instruction lit un caractère et le met sur la pile
 		LDC_W enter			// Empile la constante enter pour la comparer avec le caractère lu
 		IF_ICMPEQ SHOW			// Si le caractère lu est FIN DE LIGNE, on branche vers OUTPUT_RESULT (pour afficher le résultat)
 		
-		// Est logique mais ne fonctionne pas
-		//DUP				// Sinon, on duplique à nouveau le caractère lu
-		//LDC_W zero			// Empile la constante zero pour la comparer avec le caractère lu
-		//IFLT REMOVE_IN		// Si le code ASCII du caractère lu est inférieur à celui de '0', on le retire (car c'est un caractère indésirable)
+		DUP				// Sinon, on duplique à nouveau le caractère lu
+		LDC_W zero			// Empile la constante zero pour la comparer avec le caractère lu
+		ISUB
+		IFLT REMOVE_IN			// Si le code ASCII du caractère lu est inférieur à celui de '0', on le retire (car c'est un caractère indésirable)
 		
-		//DUP				// Sinon, on duplique à nouveau le caractère lu
-		//LDC_W nine			// Empile la constante nine pour la comparer avec le caractère lu
-		//SWAP				// Permute les deux valeurs au sommet de la pile
-		//IFLT REMOVE_IN		// Si le code ASCII du caractère lu est supérieur à celui de '9', on le retire (car c'est un caractère indésirable)
+		DUP				// Sinon, on duplique à nouveau le caractère lu
+		LDC_W nine			// Empile la constante nine pour la comparer avec le caractère lu
+		SWAP				// Permute les deux valeurs au sommet de la pile
+		ISUB
+		IFLT REMOVE_IN			// Si le code ASCII du caractère lu est supérieur à celui de '9', on le retire (car c'est un caractère indésirable)
 		
 		GOTO CONVERT_IN			// A ce stade, le caractère lu est forcément dans l'intervalle 0..9, on branche vers CONVERT_IN (pour le convertir en nombre décimal)
 
@@ -76,6 +77,8 @@ ADD:		POP
 // SUB: Dépile deux valeurs du sommet et empile leur différence
 SUB:		POP
 		ISUB
+		DUP
+		IFLT SHOW_NEGATIVE
 		GOTO BEGIN
 
 // CONVERT_IN: Converti le code ASCII de la valeur au sommet de la pile en entier et empile le résultat
@@ -85,6 +88,11 @@ CONVERT_IN:   	LDC_W zero
 
 // REMOVE_IN: Retire la valeur au sommet de la pile
 REMOVE_IN:   	POP
+      		GOTO BEGIN
+      		
+// SHOW_NEGATIVE: Empile un zéro au cas où le résultat d'une opération est négatif
+SHOW_NEGATIVE:	POP
+		BIPUSH 0
       		GOTO BEGIN
 
 .end-main
