@@ -19,10 +19,10 @@ int ecrire(int fd, char *buffer, int TAILLE) {
 
 int main() {
   int i = 0;
-  long max = 1000000000;
   int fd, err;
   int TAILLE = 1024*1024*1024;
-  char *buffer = malloc(TAILLE/max); // une variable de 1 GB 
+  int sys_call_counter = 10; // une variable permettant de définir le nombre d'appels système à effectuer
+  char *buffer = malloc(TAILLE/sys_call_counter); // une variable de 1 GB 
 
   // Ouvrir le fichier /dev/null
   fd = open("/dev/null", O_WRONLY);
@@ -31,9 +31,9 @@ int main() {
     exit(1);
   }
 
-  // Appeler la fonction "ecrire" 
-  for (i = 0; i < max; i++) {
-  	ecrire(fd,buffer,TAILLE);
+  // Appeler la fonction "ecrire" autant de fois qu'il y'a d'appels système à effectuer
+  for (i = 0; i < sys_call_counter; i++) {
+    ecrire(fd,buffer,TAILLE);
   }
 
   // Fermer le ficheir /dev/null
