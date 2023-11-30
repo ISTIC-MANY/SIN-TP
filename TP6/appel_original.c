@@ -19,10 +19,9 @@ int ecrire(int fd, char *buffer, int TAILLE) {
 
 int main() {
   int i = 0;
-  long max = 1000000000;
   int fd, err;
   int TAILLE = 1024*1024*1024;
-  char *buffer = malloc(TAILLE/max); // une variable de 1 GB 
+  char *buffer = malloc(TAILLE); // une variable de 1 GB 
 
   // Ouvrir le fichier /dev/null
   fd = open("/dev/null", O_WRONLY);
@@ -32,9 +31,7 @@ int main() {
   }
 
   // Appeler la fonction "ecrire" 
-  for (i = 0; i < max; i++) {
-  	ecrire(fd,buffer,TAILLE);
-  }
+  ecrire(fd,buffer,TAILLE);
 
   // Fermer le ficheir /dev/null
   close(fd);
